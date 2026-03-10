@@ -9,17 +9,15 @@ namespace EfCoreMoviesExample
     {
         static void Main(string[] args)
         {
-            // У реальному додатку можна було б викликати db.Database.EnsureCreated(); для автоматичного створення бази
-
             bool exit = false;
             while (!exit)
             {
                 Console.Clear();
-                Console.WriteLine("=== Головне Меню (Movies App) ===");
-                Console.WriteLine("1. Реєстрація користувача");
-                Console.WriteLine("2. Перегляд наявних юзерів");
-                Console.WriteLine("0. Вихід з застосунка");
-                Console.Write("Оберіть опцію: ");
+                Console.WriteLine("movies app (intro)");
+                Console.WriteLine("1. реєстрація користувача");
+                Console.WriteLine("2. перегляд наявних юзерів");
+                Console.WriteLine("0. вихід з застосунка");
+                Console.Write("оберіть опцію: ");
 
                 var input = Console.ReadLine();
                 switch (input)
@@ -34,8 +32,6 @@ namespace EfCoreMoviesExample
                         exit = true;
                         break;
                     default:
-                        Console.WriteLine("Невідома опція, спробуйте ще раз.");
-                        WaitForKey();
                         break;
                 }
             }
@@ -44,15 +40,15 @@ namespace EfCoreMoviesExample
         static void RegisterUserMenu()
         {
             Console.Clear();
-            Console.WriteLine("=== Реєстрація користувача ===");
+            Console.WriteLine("реєстрація");
             
-            Console.Write("Введіть ім'я: ");
+            Console.Write("ім'я: ");
             string name = Console.ReadLine() ?? string.Empty;
 
-            Console.Write("Введіть логін: ");
+            Console.Write("логін: ");
             string login = Console.ReadLine() ?? string.Empty;
 
-            Console.Write("Введіть пароль: ");
+            Console.Write("пароль: ");
             string password = Console.ReadLine() ?? string.Empty;
 
             try
@@ -67,14 +63,13 @@ namespace EfCoreMoviesExample
                     };
                     
                     db.Users.Add(newUser);
-                    db.SaveChanges(); // Збереження нового користувача у БД
+                    db.SaveChanges();
                 }
-
-                Console.WriteLine("\nКористувача успішно зареєстровано!");
+                Console.WriteLine("успіх.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nВиникла помилка при реєстрації (можливо, не створена БД): {ex.Message}");
+                Console.WriteLine(ex.Message);
             }
 
             WaitForKey();
@@ -83,7 +78,7 @@ namespace EfCoreMoviesExample
         static void ViewUsersMenu()
         {
             Console.Clear();
-            Console.WriteLine("=== Перегляд наявних юзерів ===");
+            Console.WriteLine("юзери:");
 
             try
             {
@@ -93,20 +88,20 @@ namespace EfCoreMoviesExample
 
                     if (users.Count == 0)
                     {
-                        Console.WriteLine("В базі немає зареєстрованих користувачів.");
+                        Console.WriteLine("пусто.");
                     }
                     else
                     {
                         foreach (var user in users)
                         {
-                            Console.WriteLine($"ID: {user.Id,-3} | Ім'я: {user.Name,-15} | Логін: {user.Login}");
+                            Console.WriteLine($"{user.Id} | {user.Name} | {user.Login}");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nВиникла помилка при зчитуванні користувачів: {ex.Message}");
+                Console.WriteLine(ex.Message);
             }
 
             WaitForKey();
@@ -114,7 +109,6 @@ namespace EfCoreMoviesExample
 
         static void WaitForKey()
         {
-            Console.WriteLine("\nНатисніть будь-яку клавішу для повернення до попереднього меню...");
             Console.ReadKey();
         }
     }

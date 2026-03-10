@@ -7,7 +7,6 @@ namespace AdoNetExample
     {
         static void Main(string[] args)
         {
-            // Рядок підключення. Для прикладу використаємо LocalDB (SQL Server)
             string connectionString = "Server=(localdb)\\mssqllocaldb;Database=master;Trusted_Connection=True;";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -17,27 +16,32 @@ namespace AdoNetExample
                     connection.Open();
                     Console.WriteLine("Підключення до бази даних успішне!");
 
-                    // 1. Створення таблиці (Предметна область: Книги)
                     string createTableQuery = @"
-                        CREATE TABLE Books (
-                            Id INT IDENTITY(1,1) PRIMARY KEY,
-                            Title NVARCHAR(100) NOT NULL,
-                            Author NVARCHAR(100) NOT NULL,
-                            Year INT NOT NULL
+                        create table books (
+                            id int identity(1,1) primary key,
+                            title nvarchar(100) not null,
+                            author nvarchar(100) not null,
+                            year int not null
                         )";
                     using (SqlCommand command = new SqlCommand(createTableQuery, connection))
                     {
-                        command.ExecuteNonQuery();
-                        Console.WriteLine("Таблицю 'Books' успішно перевірено/створено.");
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                            Console.WriteLine("Таблицю 'books' успішно створено.");
+                        } 
+                        catch (SqlException)
+                        {
+                        }
                     }
 
-                    using (SqlCommand command = new SqlCommand("DELETE FROM Books", connection))
+                    using (SqlCommand command = new SqlCommand("delete from books", connection))
                     {
                         command.ExecuteNonQuery();
                     }
 
                     string insertQuery = @"
-                        INSERT INTO Books (Title, Author, Year) VALUES 
+                        insert into books (title, author, year) values 
                         ('1984', 'Джордж Орвелл', 1949),
                         ('Майстер і Маргарита', 'Михайло Булгаков', 1967),
                         ('Кобзар', 'Тарас Шевченко', 1840)";
@@ -50,11 +54,10 @@ namespace AdoNetExample
                     Console.WriteLine("\nВведіть ім'я автора або його частину для пошуку (наприклад, 'Орвелл'):");
                     string searchAuthor = Console.ReadLine();
 
-                    string searchQuery = "SELECT Id, Title, Year FROM Books WHERE Author LIKE @Author";
+                    string searchQuery = "select id, title, year from books where author like @author";
                     using (SqlCommand command = new SqlCommand(searchQuery, connection))
                     {
-                        // Використання параметрів для уникнення SQL Injection
-                        command.Parameters.AddWithValue("@Author", "%" + searchAuthor + "%");
+                        command.Parameters.AddWithValue("@author", "%" + searchAuthor + "%");
 
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -63,7 +66,7 @@ namespace AdoNetExample
                             while (reader.Read())
                             {
                                 found = true;
-                                Console.WriteLine($"Id: {reader["Id"]}, Назва: {reader["Title"]}, Рік: {reader["Year"]}");
+                                Console.WriteLine($"Id: {reader["id"]}, Назва: {reader["title"]}, Рік: {reader["year"]}");
                             }
                             
                             if (!found)
@@ -75,7 +78,7 @@ namespace AdoNetExample
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Помилка при роботі з БД: {ex.Message}");
+                    Console.WriteLine($"Помилка: {ex.Message}");
                 }
             }
 

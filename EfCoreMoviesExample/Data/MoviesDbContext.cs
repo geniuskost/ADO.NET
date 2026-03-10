@@ -10,8 +10,7 @@ namespace EfCoreMoviesExample.Data
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Для прикладу використовуємо LocalDB. За необхідності можна змінити на іншу БД (наприклад, SQLite чи PostgreSQL)
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MoviesDbEfCore;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("server=(localdb)\\mssqllocaldb;database=moviesintrodb;trusted_connection=true;trustservercertificate=true;");
         }
     }
 }
